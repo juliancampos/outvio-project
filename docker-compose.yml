@@ -1,0 +1,35 @@
+version: '3.3'
+
+services:
+  api-service:
+    build:
+      context: ./api
+      dockerfile: ./dockerfile
+    ports:
+      - 3001:3001
+    depends_on:
+      - redis-service
+    environment:
+      - PORT=3001
+      - IP_QUANTITY_REQUESTS=5
+      - IP_PERIOD_TIME=3600
+      - USER_QUANTITY_REQUESTS=5
+      - USER_PERIOD_TIME=3600
+      - TOKEN_SECRET=SECRET_JWT
+      - TOKEN_EXPIRE_TIME=20
+      - REDIS_HOST=redis-service
+      - REDIS_PORT=6379
+    networks:
+      - backend
+
+  redis-service:
+    container_name: 'redis-service'
+    image: 'redis:6.2-alpine'
+    ports:
+      - '6379:6379'
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
