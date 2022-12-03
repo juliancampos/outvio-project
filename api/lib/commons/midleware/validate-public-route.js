@@ -1,22 +1,23 @@
 const { isBlocked, nextFreeAt } = require('../utils');
 const redisClient = require('../../client/redis');
+const { ipHistoryService } = require('../../services');
 
-const requestLimitIp = process.env.IP_QUANTITY_REQUESTS;
-const expireKey = process.env.IP_PERIOD_TIME;
-
-const validatePublicRoute = async (req, res, next) => {
+const validatePublicRoute = (req, res, next) => {
   try {
-    const result = await isBlocked(req.ip, requestLimitIp, redisClient);
-    if (result.blocked) {
-      const freeAt = nextFreeAt(result);
-      return res.status(429).send({
-        messate: 'Limit request exceded',
-        freeAt
-      });
-    }
+    const { ip } = req;
+    isBlocked(ip, redisClient).then((result) => {
+      if (result) {
+        const blockedUntil = nextFreeAt(result);
+        return res.status(429).send({
+          messate: 'Limit request exceded on public route',
+          blockedUntil
+        });
+      };
 
-    await redisClient.setKey(req.ip, expireKey);
-    next();
+      ipHistoryService.save({ ip, route: req.baseUrl });
+      ipHistoryService.find(ip);
+      next();
+    });
   } catch (error) {
     return res.status(500).send({ error });
   }

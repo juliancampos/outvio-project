@@ -2,11 +2,13 @@ require('dotenv').config()
 const logger = require('./lib/commons/logger');
 const server = require('./lib/server');
 const redisClient = require('./lib/client/redis');
+const database = require('./lib/database');
 
 const shutdown = async () => {
   logger.info('Server receive signal to shutdown.');
   await redisClient.disconnect();
-  await server.stop();
+  await database.disconnect();
+  // await server.stop();
   process.exit(0);
 };
 
@@ -28,7 +30,9 @@ process
 
 (async () => {
   try {
+    await database.connect();
     await redisClient.connect();
+    // await server.start();
     await server.start();
   } catch (error) {
     logger.warn('[APP] initialization failed', error);

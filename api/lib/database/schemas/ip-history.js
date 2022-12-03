@@ -1,0 +1,13 @@
+let mongoose = require('mongoose');
+const expireAfterSeconds = process.env.IP_PERIOD_TIME;
+
+let ipHistory = mongoose.Schema({
+  ip: String,
+  route: String
+}, {
+  timestamps: true
+});
+
+ipHistory.index({ createdAt: 1 }, { expireAfterSeconds });
+
+module.exports = mongoose.model('ipHistory', ipHistory);

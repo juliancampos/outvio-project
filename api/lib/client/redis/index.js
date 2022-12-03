@@ -8,15 +8,19 @@ const client = redis.createClient({
   }
 });
 
-const setKey = async (key, expireKeyTime) => {
+const setKey = async(key, expireKeyTime) => {
   const currentDate = new Date();
-  const newKey = `${key}_${currentDate.toString()}`;
-  await client.set(newKey, currentDate.toString(), 'EX', expireKeyTime);
-  await client.expire(newKey, expireKeyTime);
+  await client.set(key, currentDate.toString(), 'EX', expireKeyTime);
+  await client.expire(key, expireKeyTime);
 }
 
-const getKeys = async (key) => {
+const getKeys = async(key) => {
   const result = await client.keys(`${key}*`);
+  return result;
+}
+
+const findKey = async(key) => {
+  const result = await client.get(key);
   return result;
 }
 
@@ -39,5 +43,6 @@ module.exports = {
   getKeys,
   deleteKey,
   connect,
-  disconnect
+  disconnect,
+  findKey
 }

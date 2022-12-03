@@ -1,42 +1,39 @@
 const express = require('express');
 const logger = require('../commons/logger');
-const routes = require('../routes');
+const { publicRoutes, privateRoutes } = require('../routes');
 
-const server = (() => {
-  const port = process.env.PORT;
-  const app = express();
-  let serverProcess;
+const port = process.env.PORT;
 
-  const start = () => new Promise((resolve) => {
-    app.use(express.urlencoded({ extended: true }));
-    app.use(express.json());
+class Server {
+  constructor() {
+    this.express = express();
+    this.privateRouter = express.Router();
+    this.publicRouter = express.Router();
 
-    routes(app);
+    this.middlewares();
+    this.routes();
+  }
 
-    serverProcess = app.listen(port, () => {
-      logger.info('------------------------------------------------------------------');
-      logger.info(`Express server listening on port: ${port}`);
-      logger.info('------------------------------------------------------------------');
+  middlewares() {
+    this.express.use(express.json());
+  }
 
-      return resolve(app);
-    });
-  });
+  start() {
+    this.express.listen(port, () =>
+      logger.info(`[app] running at port: ${port} `)
+    );
+  }
 
-  const stop = () => new Promise((resolve, reject) => {
-    if (serverProcess) {
-      serverProcess.close((err) => {
-        if (err) {
-          return reject(err);
-        }
-        return resolve();
-      });
-    }
-  });
+  stop() {
+    this.express.close();
+  }
 
-  return {
-    start,
-    stop
-  };
-})();
-
-module.exports = server;
+  routes() {
+    publicRoutes(this.publicRouter);  
+    privateRoutes(this.privateRouter);
+    
+    this.express.use('/public', this.publicRouter);
+    this.express.use('/private', this.privateRouter);
+  }
+}
+module.exports = new Server();

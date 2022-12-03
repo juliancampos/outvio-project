@@ -1,14 +1,10 @@
-const isBlocked = async (key, requestLimit, redisClient) => {
-  const keysFound = await redisClient.getKeys(`${key}_`);
-  return {
-    blocked: !(requestLimit > keysFound.length||0),
-    key: keysFound[0]
-  }
+const isBlocked = async (key, redisClient) => {
+  const found = await redisClient.findKey(key);
+  return found;
 }
 
 const nextFreeAt = (data) => {
-  let [,blockedTime] = data.key.split('_');
-  blockedTime = new Date(blockedTime);
+  let blockedTime = new Date(data);
   return new Date(blockedTime.setHours(blockedTime.getHours() + 1));
 }
 

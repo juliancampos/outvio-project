@@ -1,7 +1,9 @@
 const { validatePublicRoute } = require('../commons/midleware');
 const { publicController, loginController } = require('../controllers');
 
-module.exports = (app) => {
-  app.get('/public', validatePublicRoute, publicController);
-  app.post('/login', loginController);
+module.exports = (router) => {
+  router.post('/login', loginController);
+
+  router.use(validatePublicRoute);
+  router.get('/', publicController);
 }

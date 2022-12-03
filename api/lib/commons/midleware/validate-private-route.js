@@ -1,22 +1,23 @@
 const { isBlocked, nextFreeAt } = require('../utils');
 const redisClient = require('../../client/redis');
+const userHistoryService = require('../../services/user-history-service');
 
-const requestLimitToken = process.env.USER_QUANTITY_REQUESTS;
-const expireKeyTime = process.env.USER_PERIOD_TIME;
-
-const validatePrivateRoute = async (req, res, next) => {
+const validatePrivateRoute = (req, res, next) => {
   try {
-    const result = await isBlocked(req.user.username, requestLimitToken, redisClient);
-    if (result.blocked) {
-      const freeAt = nextFreeAt(result);
-      return res.status(429).send({
-        messate: 'Limit request exceded',
-        freeAt
-      });
-    }
+    const { username } = req.user;
+    isBlocked(username, redisClient).then((result) => {
+      if (result) {
+        const blockedUntil = nextFreeAt(result);
+        return res.status(429).send({
+          message: 'Limit request exceded on private route',
+          blockedUntil
+        });
+      };
 
-    await redisClient.setKey(req.user.username, expireKeyTime);
-    next();
+      userHistoryService.save({ username, route: req.baseUrl });
+      userHistoryService.find(username);
+      next();
+    })
   } catch (error) {
     return res.status(500).send({ error });
   }
