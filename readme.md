@@ -10,26 +10,28 @@ Project developed to validate knowledge on recruitment process.
 #### If exced the requests limit number, this route returns blocked.
 
 ```http
-  GET /public
+  GET /public/user
 ```
 
-| Parameter   | Type       | Description                           |
-| :---------- | :--------- | :---------------------------------- |
-| `api_key` | `string` | **Obrigatório**. A chave da sua API |
+```http
+  GET /public/history
+```
 
 ```http
   GET /private
 ```
-| Parameter   | Type       | Description                                   |
-| :---------- | :--------- | :------------------------------------------ |
-| `authorization` | `bearer` | **mandatory**. Token created to access the private route |
 
 ```http
-  POST /login
+  POST /public/login
 ```
 | Parameter   | Type       | Description                                   |
 | :---------- | :--------- | :------------------------------------------ |
 | `username` | `string` | **mandatory**. The user name that will be used to create a token |
+
+
+| Parameter   | Type       | Description                                   |
+| :---------- | :--------- | :------------------------------------------ |
+| `authorization` | `bearer` | **mandatory**. Token created to access the private route |
 
 
 #### Retorna um item
@@ -75,6 +77,21 @@ To run this project, you need to set the following variables on .env
    Define the time expiration of token
 ```
 
+`PUBLIC_ROUTE_USER_POINTS`
+```
+   Define the route points to a '/public/user' route
+```
+
+`PUBLIC_ROUTE_HISTORY_POINTS`
+```
+   Define the route points to a '/public/history' route
+```
+
+`PRIVATE_ROUTE_POINTS`
+```
+   Define the route points to a '/private' route
+```
+
 ## Deploy
 ### A project inside a docker container
 type on root:
@@ -87,7 +104,9 @@ type on root:
 
 type on root:
 ```bash
+  docker-compose build database-service
   docker-compose build redis-service
+  docker-compose up -d database-service
   docker-compose up -d redis-service
 ```
 
