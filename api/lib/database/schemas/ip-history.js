@@ -3,7 +3,8 @@ const expireAfterSeconds = process.env.IP_PERIOD_TIME;
 
 let ipHistory = mongoose.Schema({
   ip: String,
-  route: String
+  route: String,
+  weight: Number
 }, {
   timestamps: true
 });

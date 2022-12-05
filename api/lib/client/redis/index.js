@@ -8,10 +8,9 @@ const client = redis.createClient({
   }
 });
 
-const setKey = async(key, expireKeyTime) => {
-  const currentDate = new Date();
-  await client.set(key, currentDate.toString(), 'EX', expireKeyTime);
-  await client.expire(key, expireKeyTime);
+const setKey = async(key, blockedUntil, periodTime) => {
+  await client.set(key, blockedUntil);
+  await client.expire(key, periodTime);
 }
 
 const getKeys = async(key) => {

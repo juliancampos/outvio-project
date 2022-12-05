@@ -5,5 +5,6 @@ module.exports = (router) => {
   router.post('/login', loginController);
 
   router.use(validatePublicRoute);
-  router.get('/', publicController);
+  router.get('/user', publicController);
+  router.get('/history', publicController);
 }

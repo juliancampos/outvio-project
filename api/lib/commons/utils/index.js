@@ -3,12 +3,6 @@ const isBlocked = async (key, redisClient) => {
   return found;
 }
 
-const nextFreeAt = (data) => {
-  let blockedTime = new Date(data);
-  return new Date(blockedTime.setHours(blockedTime.getHours() + 1));
-}
-
 module.exports = {
   isBlocked,
-  nextFreeAt
 }

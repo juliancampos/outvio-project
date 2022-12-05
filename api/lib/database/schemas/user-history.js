@@ -3,7 +3,8 @@ const expireAfterSeconds = process.env.USER_PERIOD_TIME;
 
 let userHistory = mongoose.Schema({
   username: String,
-  route: String
+  route: String,
+  weight: Number
 }, {
   timestamps: true
 });

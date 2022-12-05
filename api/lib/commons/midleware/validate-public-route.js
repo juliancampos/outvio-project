@@ -1,21 +1,27 @@
-const { isBlocked, nextFreeAt } = require('../utils');
+const { isBlocked } = require('../utils');
 const redisClient = require('../../client/redis');
 const { ipHistoryService } = require('../../services');
+const pointsPerRoute = require('../points-per-route');
+
+const handleRouteToBlock = async (url, ip) => {
+  const weight = pointsPerRoute(url);
+  await ipHistoryService.save({ ip, route: url, weight });
+  await ipHistoryService.find(ip);
+}
 
 const validatePublicRoute = (req, res, next) => {
   try {
     const { ip } = req;
     isBlocked(ip, redisClient).then((result) => {
       if (result) {
-        const blockedUntil = nextFreeAt(result);
+        const blockedUntil = new Date(Number(result));
         return res.status(429).send({
-          messate: 'Limit request exceded on public route',
+          message: 'Limit request exceded on public route',
           blockedUntil
         });
       };
 
-      ipHistoryService.save({ ip, route: req.baseUrl });
-      ipHistoryService.find(ip);
+      handleRouteToBlock(req.originalUrl, ip);
       next();
     });
   } catch (error) {
