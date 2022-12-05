@@ -4,9 +4,7 @@ const logger = require('../commons/logger');
 const uri = process.env.DATABASE_URI;
 
 class Database {
-  constructor() {
-    
-  }
+  constructor() { }
 
   async connect() {
     return new Promise((resolve) => {

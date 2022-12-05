@@ -20,6 +20,10 @@ services:
       - TOKEN_EXPIRE_TIME=20
       - REDIS_HOST=redis-service
       - REDIS_PORT=6379
+      - PUBLIC_ROUTE_USER_POINTS=1
+      - PUBLIC_ROUTE_HISTORY_POINTS=2
+      - PRIVATE_ROUTE_POINTS=3
+      - DATABASE_URI=mongodb://database-service:27017/outvio
     networks:
       - backend
 
@@ -37,11 +41,11 @@ services:
     environment:
       - MONGO_INITIDB_DATABASE=outvio
       - MONGO_INITIDB_ROOT_USERNAME=USER_MONGODB
-      - MONGO_INITIDB_ROOT_PASSWORD=USER_SECRET 
+      - MONGO_INITIDB_ROOT_PASSWORD=USER_SECRET
     volumes:
       - ./mongo-volume:/data/db
     ports:
-      - '27017-27019:27017:27019'
+      - '27017-27017'
     networks:
       - backend
 

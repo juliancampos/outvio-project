@@ -19,13 +19,13 @@ class Server {
   }
 
   start() {
-    this.express.listen(port, () =>
+    this.app = this.express.listen(port, () =>
       logger.info(`[app] running at port: ${port} `)
     );
   }
 
   stop() {
-    this.express.close();
+    this.app.close();
   }
 
   routes() {

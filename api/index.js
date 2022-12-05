@@ -8,7 +8,7 @@ const shutdown = async () => {
   logger.info('Server receive signal to shutdown.');
   await redisClient.disconnect();
   await database.disconnect();
-  // await server.stop();
+  await server.stop();
   process.exit(0);
 };
 
@@ -32,7 +32,6 @@ process
   try {
     await database.connect();
     await redisClient.connect();
-    // await server.start();
     await server.start();
   } catch (error) {
     logger.warn('[APP] initialization failed', error);

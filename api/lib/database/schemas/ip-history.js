@@ -1,5 +1,5 @@
 let mongoose = require('mongoose');
-const expireAfterSeconds = process.env.IP_PERIOD_TIME;
+const expireAfterSeconds = Number(process.env.IP_PERIOD_TIME);
 
 let ipHistory = mongoose.Schema({
   ip: String,

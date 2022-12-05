@@ -1,5 +1,5 @@
 let mongoose = require('mongoose');
-const expireAfterSeconds = process.env.USER_PERIOD_TIME;
+const expireAfterSeconds = Number(process.env.USER_PERIOD_TIME);
 
 let userHistory = mongoose.Schema({
   username: String,
